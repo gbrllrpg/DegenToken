@@ -14,15 +14,16 @@ pragma solidity ^0.8.18;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+import "hardhat/console.sol";
 
 contract DegenToken is ERC20, Ownable, ERC20Burnable {
     constructor() ERC20("Degen", "DGN") {
         // Items
         items[1] = Item("Ape Armor", 3);
         items[2] = Item("Shark Wand", 6);
-        items[3] = Item("Dragon Wings", 9);
-        items[4] = Item("Zombie Axe", 12);
-        items[5] = Item("Alien Crossbow", 15);
+        items[3] = Item("Dragon Wings", 1);
+        items[4] = Item("Zombie Axe", 2);
+        items[5] = Item("Alien Crossbow", 1);
     }
 
     struct Item {
@@ -46,10 +47,10 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
         approve(msg.sender, _value);
         transferFrom(msg.sender, _receiver, _value);
     }
-
-    function burnTokens(uint256 _value) public {
-        require(balanceOf(msg.sender) >= _value, "Insufficient Degen Tokens");
-        _burn(msg.sender, _value);
+    
+    function burnTokens(address _player, uint256 _value) public {
+        require(balanceOf(_player) >= _value, "Insufficient Degen Tokens");
+        _burn(_player, _value);
     }
 
     function listAvailableItems() external view returns (ItemInfo[] memory) {
@@ -72,19 +73,19 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
         uint256 cost;
     }
 
-    function redeem(uint256 itemId) public returns (string memory) {
-        require(balanceOf(msg.sender) > 0, "Insufficient Degen Tokens");
+    function redeem(address _player, uint256 itemId) public returns (string memory) {
+        require(balanceOf(_player) > 0, "Insufficient Degen Tokens");
         require(items[itemId].cost > 0, "Invalid Item ID");
-        require(balanceOf(msg.sender) >= items[itemId].cost, "Not enough tokens to redeem this item");
+        require(balanceOf(_player) >= items[itemId].cost, "Not enough tokens to redeem this item");
 
         string memory itemName = items[itemId].name;
 
-        _burn(msg.sender, items[itemId].cost);
+        _burn(_player, items[itemId].cost);
 
-        emit RedemptionSuccessful(msg.sender, itemId, itemName);
+        console.log("Item redeemed by:", _player);
+        console.log("Item name:", itemName);
 
         return itemName;
     }
 
-    event RedemptionSuccessful(address indexed user, uint256 indexed itemId, string itemName);
 }
