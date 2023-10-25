@@ -88,8 +88,3 @@ contract DegenToken is ERC20, Ownable, ERC20Burnable {
 
     event RedemptionSuccessful(address indexed user, uint256 indexed itemId, string itemName);
 }
-
-
-//owner - 0x5B38Da6a701c568545dCfcB03FcB875f56beddC4
-//spender - 0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199
-//recipient - 0xdD2FD4581271e230360230F9337D5c0430Bf44C0
